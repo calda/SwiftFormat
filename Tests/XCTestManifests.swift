@@ -1901,6 +1901,8 @@ extension RulesTests {
         ("testUnusedUntypedClosureArguments", testUnusedUntypedClosureArguments),
         ("testUnwrapFuncAttribute", testUnwrapFuncAttribute),
         ("testUnwrapTypeAttribute", testUnwrapTypeAttribute),
+        ("testUpdatedVisibilityOfExtension", testUpdatedVisibilityOfExtension),
+        ("testUpdatedVisibilityOfExtensionWithDeclarationsInConditionalCompilation", testUpdatedVisibilityOfExtensionWithDeclarationsInConditionalCompilation),
         ("testUpdatesMalformedMarks", testUpdatesMalformedMarks),
         ("testUpdatesVisibilityOfExtensionInConditionalCompilationBlock", testUpdatesVisibilityOfExtensionInConditionalCompilationBlock),
         ("testUpdatesVisibilityOfExtensionMembers", testUpdatesVisibilityOfExtensionMembers),
