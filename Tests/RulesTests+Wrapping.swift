@@ -3102,6 +3102,24 @@ class WrappingTests: RulesTests {
         ], options: options)
     }
 
+    func testOpenBraceAfterEqualsInGuardNotWrapped() {
+        let input = """
+        guard
+            let foo = foo,
+            let bar: String = {
+                nil
+            }()
+        else { return }
+        """
+
+        let options = FormatOptions(
+            wrapArguments: .beforeFirst,
+            closingParenOnSameLine: true
+        )
+        testFormatting(for: input, rules: [FormatRules.wrapMultilineStatementBraces, FormatRules.wrap],
+                       options: options, exclude: ["indent", "redundantClosure"])
+    }
+
     func testMultilineBraceNotAppliedToTrailingClosure_wrapAfterFirst() {
         let input = """
         UIView.animate(duration: 10,
