@@ -2536,7 +2536,7 @@ public struct _FormatRules {
             let nextToken = formatter.next(.nonSpaceOrCommentOrLinebreak, after: closingIndex) ?? .space("")
             switch nextToken {
             case .operator("->", .infix), .keyword("throws"), .keyword("rethrows"),
-                 .keyword("async"), .identifier("async"), .keyword("in"):
+                 .identifier("async"), .keyword("in"):
                 guard let prevIndex = formatter.index(of: .nonSpaceOrCommentOrLinebreak, before: i) else {
                     return
                 }
@@ -3659,7 +3659,6 @@ public struct _FormatRules {
                     return true
                 case .keyword("throws"),
                      .keyword("rethrows"),
-                     .keyword("async"),
                      .keyword("where"),
                      .keyword("is"):
                     return false // Keep looking
@@ -3851,7 +3850,7 @@ public struct _FormatRules {
                 case .identifier("async") where
                     formatter.last(.nonSpaceOrLinebreak, before: index)?.isIdentifier == true:
                     fallthrough
-                case .operator("->", .infix), .keyword("throws"), .keyword("async"):
+                case .operator("->", .infix), .keyword("throws"):
                     // Everything after this was part of return value
                     let count = argCountStack.last ?? 0
                     argNames.removeSubrange(count ..< argNames.count)
@@ -4459,8 +4458,7 @@ public struct _FormatRules {
                 return false
             }
             switch nextToken {
-            case .operator("->", .infix), .keyword("throws"), .keyword("rethrows"),
-                 .keyword("async"), .identifier("async"):
+            case .operator("->", .infix), .keyword("throws"), .keyword("rethrows"), .identifier("async"):
                 return true
             case .startOfScope("{"):
                 if formatter.tokens[index] == .endOfScope(")"),
