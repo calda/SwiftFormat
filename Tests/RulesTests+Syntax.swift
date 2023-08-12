@@ -3694,7 +3694,7 @@ class SyntaxTests: RulesTests {
         }
         """
 
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
+        testFormatting(for: input, output, rule: FormatRules.preferForLoop)
     }
 
     func testConvertAnonymousForEachToForLoop() {
@@ -3716,7 +3716,7 @@ class SyntaxTests: RulesTests {
         for potato in potatoes { potato.bake() }
         """
 
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
+        testFormatting(for: input, output, rule: FormatRules.preferForLoop)
     }
 
     func testConvertNestedForEach() {
@@ -3738,7 +3738,7 @@ class SyntaxTests: RulesTests {
         }
         """
 
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
+        testFormatting(for: input, output, rule: FormatRules.preferForLoop)
     }
 
     func testDefaultNameAlreadyUsedInLoopBody() {
@@ -3758,7 +3758,7 @@ class SyntaxTests: RulesTests {
         }
         """
 
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
+        testFormatting(for: input, output, rule: FormatRules.preferForLoop)
     }
 
     func testIgnoreLoopsWithCaptureListForNow() {
@@ -3768,7 +3768,7 @@ class SyntaxTests: RulesTests {
             print($0, someCapturedValue)
         }
         """
-        testFormatting(for: input, rule: FormatRules.forLoop)
+        testFormatting(for: input, rule: FormatRules.preferForLoop)
     }
 
     func testConvertsReturnToContinue() {
@@ -3801,7 +3801,7 @@ class SyntaxTests: RulesTests {
             }
         }
         """
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
+        testFormatting(for: input, output, rule: FormatRules.preferForLoop)
     }
 
     func testHandlesForEachOnChainedProperties() {
@@ -3818,7 +3818,7 @@ class SyntaxTests: RulesTests {
             print(string)
         }
         """
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
+        testFormatting(for: input, output, rule: FormatRules.preferForLoop)
     }
 
     func testHandlesForEachOnFunctionCallResult() {
@@ -3835,7 +3835,7 @@ class SyntaxTests: RulesTests {
             print(baazValue)
         }
         """
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
+        testFormatting(for: input, output, rule: FormatRules.preferForLoop)
     }
 
     func testHandlesForEachOnSubscriptResult() {
@@ -3852,7 +3852,7 @@ class SyntaxTests: RulesTests {
             print(dictionaryItem)
         }
         """
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
+        testFormatting(for: input, output, rule: FormatRules.preferForLoop)
     }
 
     func testHandlesForEachOnArrayLiteral() {
@@ -3869,7 +3869,7 @@ class SyntaxTests: RulesTests {
             print(item)
         }
         """
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
+        testFormatting(for: input, output, rule: FormatRules.preferForLoop)
     }
 
     func testHandlesForEachOnCurriedFunctionWithSubscript() {
@@ -3886,7 +3886,7 @@ class SyntaxTests: RulesTests {
             print(fooItem)
         }
         """
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
+        testFormatting(for: input, output, rule: FormatRules.preferForLoop)
     }
 
     func testHandlesForEachOnArrayLiteralInParens() {
@@ -3903,7 +3903,7 @@ class SyntaxTests: RulesTests {
             print(item)
         }
         """
-        testFormatting(for: input, output, rule: FormatRules.forLoop, exclude: ["redundantParens"])
+        testFormatting(for: input, output, rule: FormatRules.preferForLoop, exclude: ["redundantParens"])
     }
 
     func testPreservesForEachAfterMultilineChain() {
@@ -3918,7 +3918,7 @@ class SyntaxTests: RulesTests {
             .map({ $0.uppercased() })
             .forEach({ print($0) })
         """
-        testFormatting(for: input, rule: FormatRules.forLoop, exclude: ["trailingClosures"])
+        testFormatting(for: input, rule: FormatRules.preferForLoop, exclude: ["trailingClosures"])
     }
 
     func testPreservesChainWithClosure() {
@@ -3930,205 +3930,6 @@ class SyntaxTests: RulesTests {
         // to silence this warning".
         strings.map { $0.uppercased() }.forEach { print($0) }
         """
-        testFormatting(for: input, rule: FormatRules.forLoop)
-    }
-
-    func testPreservesChainWithClosureInMiddleOfChain() {
-        let input = """
-        // Converting this to a for loop would result in unusual looking syntax like
-        // `for string in strings.map { $0.uppercased() }.values { print(string) }`
-        // which causes a warning to be emitted: "trailing closure in this context is
-        // confusable with the body of the statement; pass as a parenthesized argument
-        // to silence this warning".
-        strings.map { $0.uppercased() }.values.forEach { print($0) }
-        """
-        testFormatting(for: input, rule: FormatRules.forLoop)
-    }
-
-    func testHandlesTryBeforeForEach() {
-        let input = """
-        try planets.forEach {
-            try $0.terraform()
-        }
-        """
-
-        let output = """
-        for planet in planets {
-            try planet.terraform()
-        }
-        """
-
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
-    }
-
-    func testForEachReversed() {
-        let input = """
-        foos.reversed().forEach {
-            print($0)
-        }
-        """
-
-        let output = """
-        for foo in foos.reversed() {
-            print(foo)
-        }
-        """
-
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
-    }
-
-    func testForEachSorted() {
-        let input = """
-        foos.sorted().forEach {
-            print($0)
-        }
-        """
-
-        let output = """
-        for foo in foos.sorted() {
-            print(foo)
-        }
-        """
-
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
-    }
-
-    func testForEachMapFilterSort() {
-        let input = """
-        foos.map(\\.foo).filter(\\.isBar).sorted().forEach {
-            print($0)
-        }
-        """
-
-        let output = """
-        for foo in foos.map(\\.foo).filter(\\.isBar).sorted() {
-            print(foo)
-        }
-        """
-
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
-    }
-
-    func testForEachEnumeratedWithSingleVariable() {
-        let input = """
-        foos.enumerated().forEach {
-            print($0.offset, $0.element)
-        }
-        """
-
-        let output = """
-        for foo in foos.enumerated() {
-            print(foo.offset, foo.element)
-        }
-        """
-
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
-    }
-
-    func testForEachEnumeratedAnonymousNotConverted() {
-        let input = """
-        // We don't have an easy way to know what name to use for $1 here, so leave it as-is.
-        foos.enumerated().forEach {
-            print($0, $1)
-        }
-        """
-
-        testFormatting(for: input, rule: FormatRules.forLoop)
-    }
-
-    func testForEachWithNamedArgumentAndType() {
-        let input = """
-        foos.forEach { (foo: Foo) in
-            print(foo)
-        }
-        """
-
-        let output = """
-        for foo in foos {
-            print(foo)
-        }
-        """
-
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
-    }
-
-    func testForEachWithNamedArguments() {
-        let input = """
-        foos.enumerated().forEach { index, foo in
-            print(index, foo)
-        }
-        """
-
-        let output = """
-        for (index, foo) in foos.enumerated() {
-            print(index, foo)
-        }
-        """
-
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
-    }
-
-    func testForEachWithNamedArgumentsAndTypes() {
-        let input = """
-        foos.enumerated().forEach { (index: Int, foo: Foo) in
-            print(index, foo)
-        }
-        """
-
-        let output = """
-        for (index, foo) in foos.enumerated() {
-            print(index, foo)
-        }
-        """
-
-        testFormatting(for: input, output, rule: FormatRules.forLoop)
-    }
-
-    func testForEachWithReturnVoidValue() {
-        let input = """
-        foos.forEach { foo in
-            // This is valid as long as `bar()` returns `Void`.
-            // It doesn't seem very safe to convert this to use `continue`,
-            // since `continue foo.bar()` would be invalid.
-            return foo.bar()
-        }
-        """
-
-        testFormatting(for: input, rule: FormatRules.forLoop, exclude: ["redundantReturn"])
-    }
-
-    func testPreservesAnonymousClosure() {
-        let input = """
-        foos.forEach { print($0) }
-        foos.forEach { foo in print(foo) }
-        """
-
-        let output = """
-        foos.forEach { print($0) }
-        for foo in foos { print(foo) }
-        """
-
-        let options = FormatOptions(preserveAnonymousForEach: true)
-        testFormatting(for: input, output, rule: FormatRules.forLoop, options: options)
-    }
-
-    func testConvertSingleLineForEachToMultiLineForLoop() {
-        let input = """
-        foos.forEach { print($0) }
-        bars.forEach { print($0) }
-        """
-
-        let output = """
-        for foo in foos {
-            print(foo)
-        }
-
-        for bar in bars {
-            print(bar)
-        }
-        """
-
-        let options = FormatOptions(preserveSingleLineForEach: false)
-        testFormatting(for: input, [output], rules: [FormatRules.forLoop, FormatRules.indent, FormatRules.blankLinesBetweenScopes], options: options)
+        testFormatting(for: input, rule: FormatRules.preferForLoop)
     }
 }
