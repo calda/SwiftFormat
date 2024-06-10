@@ -1,0 +1,20 @@
+on:
+  release:
+    types: [created]
+  pull_request:
+  push:
+name: Build Release Artifacts
+jobs:
+  generate:
+    name: Create release artifacts
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build Artifact Bundle
+        run: ./Scripts/build-release.sh ${{ github.event.release.name }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: swiftformat.artifactbundle.zip
+          path: swiftformat.artifactbundle.zip
