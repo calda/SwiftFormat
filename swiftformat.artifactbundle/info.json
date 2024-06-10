@@ -1,0 +1,19 @@
+{
+    "schemaVersion": "1.0",
+    "artifacts": {
+        "swiftformat": {
+            "version": "0.53.10",
+            "type": "executable",
+            "variants": [
+                {
+                    "path": "swiftformat-0.53.10-macos/bin/swiftformat",
+                    "supportedTriples": ["x86_64-apple-macosx", "arm64-apple-macosx"]
+                },
+                {
+                    "path": "swiftformat-0.53.10-linux-gnu/bin/swiftformat_linux",
+                    "supportedTriples": ["x86_64-unknown-linux-gnu"]
+                }
+            ]
+        }
+    }
+}
