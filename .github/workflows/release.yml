@@ -27,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set Version Number
-        run: echo "Using version number $GITHUB_REF_NAME" && sed -i '' 's/let swiftFormatVersion = "[^"]*"/let swiftFormatVersion = "$GITHUB_REF_NAME"/' Sources/SwiftFormat.swift
+        run: echo "Using version number $GITHUB_REF_NAME" && sed -i 's/let swiftFormatVersion = "[^"]*"/let swiftFormatVersion = "$GITHUB_REF_NAME"/' Sources/SwiftFormat.swift
       - name: Build Linux binary
         run: |
           swift build --configuration release --static-swift-stdlib --enable-dead-strip
