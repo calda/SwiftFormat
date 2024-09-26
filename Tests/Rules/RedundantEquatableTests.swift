@@ -152,4 +152,56 @@ final class RedundantEquatableTests: XCTestCase {
 
         testFormatting(for: input, rule: .redundantEquatable)
     }
+
+    func testAdoptsEquatableMacroOnClass() {
+        let input = """
+        import FooLib
+
+        class Foo: Equatable {
+            let bar: Bar
+            let baaz: Baaz
+
+            static func ==(_ lhs: Foo, _ rhs: Foo) -> Equatable {
+                lhs.bar == rhs.bar && lhs.baaz == rhs.baaz
+            }
+        }
+
+        class Quux: Equatable {
+            let bar: Bar
+            let baaz: Baaz
+        }
+
+        extension Quux: Equatable, OtherConformance {
+            static func ==(_ lhs: Quux, _ rhs: Quux) -> Equatable {
+                lhs.bar == rhs.bar && lhs.baaz == rhs.baaz
+            }
+        }
+        """
+
+        let output = """
+        import FooLib
+        import MyEquatableMacroLib
+
+        @Equatable
+        class Foo {
+            let bar: Bar
+            let baaz: Baaz
+        }
+
+        @Equatable
+        class Quux {
+            let bar: Bar
+            let baaz: Baaz
+        }
+
+        extension Quux: OtherConformance {}
+        """
+
+        let options = FormatOptions(typeAttributes: .prevLine, equatableMacroInfo: EquatableMacroInfo(rawValue: "@Equatable,MyEquatableMacroLib"))
+        testFormatting(
+            for: input, [output],
+            rules: [.redundantEquatable, .emptyBraces, .blankLinesAtEndOfScope, .wrapAttributes, .sortImports],
+            options: options
+        )
+    }
 }
