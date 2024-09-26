@@ -11,7 +11,7 @@ final class RedundantEquatableTests: XCTestCase {
             let bar: Bar
             let baaz: Baaz
 
-            static func ==(_ lhs: Foo, _ rhs: Foo) -> Bool {
+            static func ==(lhs: Foo, rhs: Foo) -> Bool {
                 lhs.bar == rhs.bar
                     && lhs.baaz == rhs.baaz
             }
@@ -59,7 +59,7 @@ final class RedundantEquatableTests: XCTestCase {
         }
 
         extension Foo: Equatable {
-            static func ==(_ lhs: Foo, _ rhs: Foo) -> Bool {
+            static func ==(lhs: Foo, rhs: Foo) -> Bool {
                 lhs.bar == rhs.bar && lhs.baaz == rhs.baaz 
             }
         }
@@ -96,7 +96,7 @@ final class RedundantEquatableTests: XCTestCase {
         }
 
         extension Foo: Equatable {
-            static func ==(_ lhs: Self, _ rhs: Self) -> Bool {
+            static func ==(lhs: Self, rhs: Self) -> Bool {
                 lhs.bar == rhs.bar
                     && lhs.baaz == rhs.baaz
             }
@@ -161,7 +161,7 @@ final class RedundantEquatableTests: XCTestCase {
             let bar: Bar
             let baaz: Baaz
 
-            static func ==(_ lhs: Foo, _ rhs: Foo) -> Equatable {
+            static func ==(lhs: Foo, rhs: Foo) -> Equatable {
                 lhs.bar == rhs.bar && lhs.baaz == rhs.baaz
             }
         }

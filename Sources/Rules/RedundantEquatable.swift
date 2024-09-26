@@ -97,7 +97,7 @@ public extension FormatRule {
               let bar: Bar
               let baaz: Baaz
 
-        -     static func ==(_ lhs: Foo, _ rhs: Foo) -> Bool {
+        -     static func ==(lhs: Foo, rhs: Foo) -> Bool {
         -         lhs.bar == rhs.bar 
         -             && lhs.baaz == rhs.baaz
         -     }
@@ -106,7 +106,7 @@ public extension FormatRule {
           class Bar: Equatable {
               let baaz: Baaz
 
-              static func ==(_ lhs: Bar, _ rhs: Bar) -> Bool {
+              static func ==(lhs: Bar, rhs: Bar) -> Bool {
                   lhs.baaz == rhs.baaz
               }
           }
@@ -127,7 +127,7 @@ public extension FormatRule {
         - class Bar: Equatable {
               let baaz: Baaz
 
-        -     static func ==(_ lhs: Bar, _ rhs: Bar) -> Bool {
+        -     static func ==(lhs: Bar, rhs: Bar) -> Bool {
         -         lhs.baaz == rhs.baaz
         -     }
           }
@@ -185,9 +185,8 @@ extension Formatter {
                 let functionArguments = parseFunctionDeclarationArguments(startOfScope: startOfArguments)
 
                 if functionArguments.count == 2,
-                   functionArguments[0].externalLabel == nil,
+                   // The external label doesn't matter, it can be `_` or `lhs/rhs`.
                    functionArguments[0].internalLabel == "lhs",
-                   functionArguments[1].externalLabel == nil,
                    functionArguments[1].internalLabel == "rhs",
                    functionArguments[0].type == functionArguments[1].type
                 {
