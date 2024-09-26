@@ -1916,25 +1916,6 @@ extension Formatter {
         return (argumentNames: argumentNames, inKeywordIndex: inKeywordIndex)
     }
 
-    /// The fully qualified name starting at the given index
-    func fullyQualifiedName(startingAt index: Int) -> (name: String, endIndex: Int) {
-        // If the identifier is followed by a dot, it's actually the first
-        // part of the fully-qualified name and we should skip through
-        // to the last component of the name.
-        var name = tokens[index].string
-        var index = index
-
-        while token(at: index + 1)?.string == ".",
-              let nextIdentifier = token(at: index + 2),
-              nextIdentifier.is(.identifier) == true
-        {
-            name = "\(name).\(nextIdentifier.string)"
-            index += 2
-        }
-
-        return (name, index)
-    }
-
     /// Get the type of the declaration starting at the index of the declaration keyword
     func declarationType(at index: Int) -> String? {
         guard let token = token(at: index), token.isDeclarationTypeKeyword,
@@ -2362,27 +2343,32 @@ extension Formatter {
     func parseConformancesOfType(atKeywordIndex keywordIndex: Int) -> [(conformance: String, index: Int)] {
         assert(Token.swiftTypeKeywords.contains(tokens[keywordIndex].string))
 
-        guard let startOfTypeBody = index(of: .startOfScope("{"), after: keywordIndex),
-              let startOfConformanceList = index(of: .delimiter(":"), in: keywordIndex ..< startOfTypeBody)
+        guard let startOfType = index(of: .nonSpaceOrCommentOrLinebreak, after: keywordIndex),
+              let typeName = parseType(at: startOfType),
+              let indexAfterType = index(of: .nonSpaceOrCommentOrLinebreak, after: typeName.range.upperBound),
+              tokens[indexAfterType] == .delimiter(":"),
+              let firstConformanceIndex = index(of: .nonSpaceOrCommentOrLinebreak, after: indexAfterType)
         else { return [] }
 
         var conformances = [(conformance: String, index: Int)]()
-        var searchIndex = startOfConformanceList
+        var nextConformanceIndex = firstConformanceIndex
 
-        while let nextConformanceIndex = index(of: .nonSpaceOrCommentOrLinebreak, after: searchIndex),
-              tokens[nextConformanceIndex].isIdentifier
-        {
-            conformances.append((conformance: tokens[nextConformanceIndex].string, index: nextConformanceIndex))
+        while let type = parseType(at: nextConformanceIndex) {
+            conformances.append((conformance: type.name, index: nextConformanceIndex))
 
-            if let nextTokenIndex = index(of: .nonSpaceOrCommentOrLinebreak, after: nextConformanceIndex) {
-                searchIndex = nextTokenIndex
+            if let nextTokenIndex = index(of: .nonSpaceOrCommentOrLinebreak, after: type.range.upperBound) {
+                nextConformanceIndex = nextTokenIndex
 
-                // Skip over any comma tokens that separate conformances
-                if tokens[nextTokenIndex] == .delimiter(","),
-                   let followingConformanceIndex = index(of: .nonSpaceOrCommentOrLinebreak, after: nextTokenIndex)
-                {
-                    searchIndex = followingConformanceIndex
+                // Skip over any comma tokens that separate conformances.
+                // If we find something other than a comma, like a `where` or `{`,
+                // then we reached the end of the conformance list.
+                guard tokens[nextTokenIndex] == .delimiter(","),
+                      let followingConformanceIndex = index(of: .nonSpaceOrCommentOrLinebreak, after: nextTokenIndex)
+                else {
+                    return conformances
                 }
+
+                nextConformanceIndex = followingConformanceIndex
             }
         }
 

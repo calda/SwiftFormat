@@ -836,4 +836,52 @@ class MarkTypesTests: XCTestCase {
             .init(line: 2, rule: .markTypes, filePath: nil, isMove: false),
         ])
     }
+
+    func testComplexTypeNames() throws {
+        let input = """
+        extension [Foo]: TestProtocol {
+            func test() {}
+        }
+
+        extension Foo.Bar.Baaz: TestProtocol {
+            func test() {}
+        }
+
+        extension Collection<Foo>: TestProtocol {
+            func test() {}
+        }
+
+        extension Foo?: TestProtocol {
+            func test()
+        }
+        """
+
+        let output = """
+        // MARK: - [Foo] + TestProtocol
+
+        extension [Foo]: TestProtocol {
+            func test() {}
+        }
+
+        // MARK: - Foo.Bar.Baaz + TestProtocol
+
+        extension Foo.Bar.Baaz: TestProtocol {
+            func test() {}
+        }
+
+        // MARK: - Collection<Foo> + TestProtocol
+
+        extension Collection<Foo>: TestProtocol {
+            func test() {}
+        }
+
+        // MARK: - Foo? + TestProtocol
+
+        extension Foo?: TestProtocol {
+            func test()
+        }
+        """
+
+        testFormatting(for: input, output, rule: .markTypes)
+    }
 }
