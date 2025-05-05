@@ -9,8 +9,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set Version Number
-        run: echo "Using version number $GITHUB_REF_NAME" && sed -i '' "s/let swiftFormatVersion = \"[^\"]*\"/let swiftFormatVersion = \"$GITHUB_REF_NAME\"/" Sources/SwiftFormat.swift
+      #- name: Set Version Number
+      #  run: echo "Using version number $GITHUB_REF_NAME" && sed -i '' "s/let swiftFormatVersion = \"[^\"]*\"/let swiftFormatVersion = \"$GITHUB_REF_NAME\"/" Sources/SwiftFormat.swift
       - name: Build macOS binary
         run: swift build -c release --arch arm64 --arch x86_64 -Xswiftc -Osize
       - name: Strip macOS binary  
@@ -28,8 +28,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set Version Number
-        run: echo "Using version number $GITHUB_REF_NAME" && sed -i "s/let swiftFormatVersion = \"[^\"]*\"/let swiftFormatVersion = \"$GITHUB_REF_NAME\"/" Sources/SwiftFormat.swift
+      #- name: Set Version Number
+      #  run: echo "Using version number $GITHUB_REF_NAME" && sed -i "s/let swiftFormatVersion = \"[^\"]*\"/let swiftFormatVersion = \"$GITHUB_REF_NAME\"/" Sources/SwiftFormat.swift
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Install cross-binutils for aarch64
