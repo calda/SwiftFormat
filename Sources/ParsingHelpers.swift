@@ -1693,6 +1693,13 @@ extension Formatter {
     /// Parses all of the declarations in the source file.
     func parseDeclarations() -> [Declaration] {
         parseDeclarations(in: tokens.indices)
+//        if let _cachedDeclarations {
+//            return _cachedDeclarations
+//        }
+//
+//        let declarations = parseDeclarations(in: tokens.indices)
+//        _cachedDeclarations = declarations
+//        return declarations
     }
 
     /// Parses the declarations in the given range.

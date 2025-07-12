@@ -65,6 +65,9 @@ public class Formatter: NSObject {
     /// Swiftformat directives found in the file
     private var directives: [Directive] = []
 
+    /// The cached result of the most recent `parseDeclations()` call
+    var _cachedDeclarations: [Declaration]?
+
     /// Create a new formatter instance from a token array
     public init(_ tokens: [Token], options: FormatOptions = FormatOptions(),
                 trackChanges: Bool = false, range: Range<Int>? = nil)
@@ -309,6 +312,9 @@ public class Formatter: NSObject {
 
     private func updateRange(at index: Int, delta: Int) {
         autoUpdatingReferences.updateRanges(at: index, delta: delta)
+
+        // After changing any tokens, invalidate any cached data
+        _cachedDeclarations = nil
 
         guard let range, range.contains(index) else {
             return
