@@ -60,7 +60,7 @@ public extension FormatRule {
               }
             }
 
-            import XCTeset
+            import XCTest
 
             class MyFeatureTests: XCTestCase {
         -       func test_doSomething() {

@@ -1,0 +1,3 @@
+func simple() {
+    print("hello")
+}

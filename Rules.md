@@ -60,6 +60,7 @@
 * [redundantReturn](#redundantReturn)
 * [redundantSelf](#redundantSelf)
 * [redundantStaticSelf](#redundantStaticSelf)
+* [redundantThrows](#redundantThrows)
 * [redundantType](#redundantType)
 * [redundantTypedThrows](#redundantTypedThrows)
 * [redundantVoidReturnType](#redundantVoidReturnType)
@@ -2759,6 +2760,56 @@ Remove explicit `Self` where applicable.
 </details>
 <br/>
 
+## redundantThrows
+
+Remove `throws` from function declarations that don't contain any `try` expressions or `throw` statements. Note: Using `always` mode can cause build failures if the function signature is required to match a protocol or parent class.
+
+<details>
+<summary>Examples</summary>
+
+```diff
+// With --redundant-throws tests-only (default)
+import XCTest
+
+class TestCase: XCTestCase {
+-    func test_something() throws {
++    func test_something() {
+         XCTAssertEqual(1, 1)
+     }
+}
+```
+
+```diff
+// With --redundant-throws always
+- func foo() throws -> Int {
++ func foo() -> Int {
+      return 0
+  }
+
+- func bar() throws(MyError) -> Int {
++ func bar() -> Int {
+      return 42
+  }
+```
+
+```diff
+// Functions that actually throw are preserved
+  func baz() throws -> Int {
+      try somethingThatThrows()
+      return 0
+  }
+
+  func qux() throws -> Int {
+      guard someCondition else {
+          throw MyError.failed
+      }
+      return 1
+  }
+```
+
+</details>
+<br/>
+
 ## redundantType
 
 Remove redundant type from variable declarations.
@@ -3380,7 +3431,7 @@ Write tests that use `throws` instead of using `try!`.
       }
     }
 
-    import XCTeset
+    import XCTest
 
     class MyFeatureTests: XCTestCase {
 -       func test_doSomething() {
